@@ -75,6 +75,8 @@ def generate_rejection():
     """Generate rejection letter"""
     try:
         data = request.json
+        first_name = data.get('firstName', 'Candidate')
+        last_name = data.get('lastName', '')
         company = data.get('company', 'TechCorp')
         role = data.get('role', 'Product Manager')
         email = data.get('email', None)
@@ -84,31 +86,35 @@ def generate_rejection():
         
         # Generate rejection letter with updated prompt
         prompt = f"""Generate a rejection letter from {company} for the role of {role}.
+The candidate's name is {first_name} {last_name}.
 
-TONE - READ CAREFULLY:
-Imagine a corporate recruiter who just read Mary Oliver poetry during their lunch break and can't quite shake it off. They sit down to write another rejection letter, and something slips through.
+STRUCTURE - THIS IS CRUCIAL:
 
-THE LETTER SHOULD:
-- Follow the exact structure of a real rejection email (greeting, thank you, "after careful consideration", wish you well, sign-off)
-- Use authentic corporate language - nothing satirical or mocking
-- But contain ONE moment where something unexpectedly true or tender breaks through
-- This moment should feel accidental, like the recruiter surprised themselves
-- It should land somewhere between the lines, making the reader pause
+PARAGRAPH 1 - CORPORATE OPENING:
+Start with a completely standard, dry corporate rejection opening. "Dear {first_name}, thank you for taking the time... after careful consideration... we regret to inform you..." 
+Make it feel like every other rejection letter ever written. Professional. Distant. Template-like.
 
-THAT ONE MOMENT COULD BE:
-- A quiet observation about the strange intimacy of reading someone's hopes on paper
-- An admission that "fit" is a word we use when we can't explain fate
-- A reflection on how every application is an act of faith
-- Something about time, waiting, or the spaces between things
+PARAGRAPH 2 - THE BREAK (THIS IS THE HEART):
+Suddenly, the tone shifts. The letter becomes unexpectedly human. Not sarcastic, not satirical—genuinely warm and honest. 
+The recruiter breaks character and speaks directly to the reader about what really matters:
+- Getting a "no" is okay. It's part of the journey.
+- We're all living through strange, uncertain times.
+- A rejection letter doesn't define your worth.
+- The courage to apply, to try, to keep going—that's what matters.
+- This letter will be forgotten. So will this rejection. What won't be forgotten: your health, your peace of mind, the people who love you.
+- Something like: "Between you and me, none of this really matters as much as we pretend it does."
 
-CRUCIAL:
-- The poetic line should NOT feel like a joke or satire
-- It should feel like genuine human leakage through corporate armor
-- Only ONE such moment - the rest is professional and real
-- The overall letter should still function as an actual rejection
+PARAGRAPH 3 - BACK TO CORPORATE:
+Snap back to dry corporate tone abruptly. "We wish you the best in your future endeavors. Best regards, [Name], Talent Acquisition Team."
+The contrast should feel almost jarring—like the human moment never happened.
 
-LENGTH: 140-180 words
-FORMAT: Professional email with greeting and sign-off (use a realistic recruiter name)"""
+IMPORTANT:
+- The middle paragraph should feel like genuine care breaking through, not irony or satire
+- It should make the reader feel seen, not mocked
+- The return to corporate speak at the end should feel almost absurd after what came before
+- Total length: 180-220 words
+
+Sign off with a realistic recruiter name and title."""
 
         message = client.messages.create(
             model="claude-sonnet-4-20250514",
