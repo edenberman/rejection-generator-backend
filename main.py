@@ -35,7 +35,7 @@ def send_rejection_email(to_email, rejection_text, company, role):
     """Send the rejection letter via email"""
     try:
         params = {
-            "from": "The Transition Project <onboarding@resend.dev>",
+            "from": "The Transition Project <rejections@nevoalmog.com>",
             "to": [to_email],
             "subject": f"Your Application Update from {company}",
             "html": f"""
@@ -50,7 +50,7 @@ def send_rejection_email(to_email, rejection_text, company, role):
                     <p style="color: #858078; font-size: 13px;">
                         Role: {role} at {company}
                     </p>
-                    <a href="https://your-ttp-website.com" style="color: #4B5F44; text-decoration: none; font-size: 13px;">
+                    <a href="https://www.nevoalmog.com" style="color: #4B5F44; text-decoration: none; font-size: 13px;">
                         Learn more about The Transition Project →
                     </a>
                 </div>
@@ -147,4 +147,3 @@ def health():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-
