@@ -1,4 +1,4 @@
-# main.py - FIXED MODEL VERSION
+# main.py - HAIKU VERSION (Safest & Fastest)
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from anthropic import Anthropic
@@ -74,7 +74,7 @@ def generate_rejection():
         
         new_count = increment_counter()
         
-        # PROMPT - No Header Instruction
+        # PROMPT
         prompt = f"""Write a rejection letter from {company} for the role of {role} to {first_name} {last_name}.
 
 CRITICAL RULES:
@@ -84,14 +84,14 @@ CRITICAL RULES:
 
 Structure:
 - Paragraph 1: Standard corporate rejection ("Thank you for applying...").
-- Paragraph 2: The "Break". Suddenly warm, honest, human. Tell them this rejection doesn't define them.
+- Paragraph 2: The "Break". Suddenly warm, honest, human. Tell them this rejection doesn't define them. "Between you and me..."
 - Paragraph 3: Back to corporate closing ("Best regards...").
 
 Sign off with a recruiter title."""
 
-        # HERE IS THE FIX: Using the stable Claude 3 Sonnet model
+        # תיקון קריטי: שימוש במודל Haiku שתמיד עובד
         message = client.messages.create(
-            model="claude-3-sonnet-20240229",
+            model="claude-3-haiku-20240307",
             max_tokens=1024,
             messages=[{
                 "role": "user",
