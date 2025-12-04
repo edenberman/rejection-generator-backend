@@ -94,34 +94,22 @@ def generate_rejection():
         
         new_count = increment_counter()
         
-        # PROMPT - Explicitly telling the AI not to use headers
-        prompt = f"""Generate a rejection letter from {company} for the role of {role}.
-The candidate's name is {first_name} {last_name}.
+        # PROMPT - הפכתי אותו למאוד ברור כדי להימנע מכותרות
+        prompt = f"""You are a recruiter writing a rejection letter.
+        
+TASK: Write a rejection letter from {company} for the role of {role} to {first_name} {last_name}.
 
-STRICT FORMATTING INSTRUCTION: 
-Do NOT write a subject line. 
-Do NOT write the company name at the top.
-Start your response IMMEDIATELY with "Dear {first_name},"
+CRITICAL RULES:
+1. Do NOT write a subject line.
+2. Do NOT write the company name as a header.
+3. Start the text directly with: "Dear {first_name},"
 
 STRUCTURE:
+1. Standard corporate rejection opening.
+2. Sudden shift to a warm, human, honest tone about resilience and how this "no" doesn't define them. "Between you and me..."
+3. Sudden shift back to corporate closing.
 
-PARAGRAPH 1 - CORPORATE OPENING:
-Start with a completely standard, dry corporate rejection. "Thank you for taking the time... after careful consideration... we regret to inform you..." 
-Professional. Distant. Template-like.
-
-PARAGRAPH 2 - THE BREAK (THE HEART):
-The tone shifts. The recruiter breaks character. Genuinely warm and honest. 
-Speak to the reader:
-- A rejection letter doesn't define your worth.
-- We're all just figuring it out.
-- "Between you and me, none of this really matters as much as we pretend it does."
-- Focus on resilience and mental health.
-
-PARAGRAPH 3 - BACK TO CORPORATE:
-Snap back to dry corporate tone. "We wish you the best in your future endeavors."
-
-Sign off with a realistic recruiter name and title (e.g. Talent Acquisition Partner).
-Total length: around 200 words."""
+Sign off with a realistic recruiter name and title."""
 
         message = client.messages.create(
             model="claude-3-5-sonnet-20240620",
