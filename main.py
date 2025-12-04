@@ -1,4 +1,4 @@
-# main.py - SAFE VERSION
+# main.py - FIXED MODEL VERSION
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from anthropic import Anthropic
@@ -32,7 +32,7 @@ def increment_counter():
     return count
 
 def send_rejection_email(to_email, rejection_text, company, role):
-    """Send the rejection letter via email - Simple Text Version"""
+    """Send the rejection letter via email"""
     try:
         params = {
             "from": "The Transition Project <rejections@nevoalmog.com>",
@@ -89,8 +89,9 @@ Structure:
 
 Sign off with a recruiter title."""
 
+        # HERE IS THE FIX: Using the stable Claude 3 Sonnet model
         message = client.messages.create(
-            model="claude-3-5-sonnet-20240620",
+            model="claude-3-sonnet-20240229",
             max_tokens=1024,
             messages=[{
                 "role": "user",
@@ -115,7 +116,6 @@ Sign off with a recruiter title."""
         })
         
     except Exception as e:
-        # זה ידפיס את השגיאה האמיתית ללוגים ב-Railway
         print(f"CRITICAL ERROR: {str(e)}")
         return jsonify({
             'success': False,
