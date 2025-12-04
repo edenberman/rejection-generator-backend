@@ -1,4 +1,4 @@
-# main.py - HAIKU VERSION (Safest & Fastest)
+# main.py - FINAL VERSION (Name Fix + Live Counter)
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from anthropic import Anthropic
@@ -19,17 +19,25 @@ COUNTER_FILE = 'rejection_counter.json'
 
 def get_counter():
     try:
+        if not os.path.exists(COUNTER_FILE):
+            return 0
         with open(COUNTER_FILE, 'r') as f:
             data = json.load(f)
             return data.get('count', 0)
-    except FileNotFoundError:
+    except Exception as e:
+        print(f"Counter Read Error: {e}")
         return 0
 
 def increment_counter():
-    count = get_counter() + 1
-    with open(COUNTER_FILE, 'w') as f:
-        json.dump({'count': count, 'last_updated': datetime.now().isoformat()}, f)
-    return count
+    try:
+        current_count = get_counter()
+        new_count = current_count + 1
+        with open(COUNTER_FILE, 'w') as f:
+            json.dump({'count': new_count, 'last_updated': datetime.now().isoformat()}, f)
+        return new_count
+    except Exception as e:
+        print(f"Counter Write Error: {e}")
+        return get_counter() + 1 # Fallback to just incrementing in memory for this request
 
 def send_rejection_email(to_email, rejection_text, company, role):
     """Send the rejection letter via email"""
@@ -72,9 +80,9 @@ def generate_rejection():
         role = data.get('role', 'Product Manager')
         email = data.get('email', None)
         
+        # This is where the magic happens - actually updating the file
         new_count = increment_counter()
         
-        # PROMPT
         prompt = f"""Write a rejection letter from {company} for the role of {role} to {first_name} {last_name}.
 
 CRITICAL RULES:
@@ -87,9 +95,10 @@ Structure:
 - Paragraph 2: The "Break". Suddenly warm, honest, human. Tell them this rejection doesn't define them. "Between you and me..."
 - Paragraph 3: Back to corporate closing ("Best regards...").
 
-Sign off with a recruiter title."""
+Sign off with a REALISTIC, INVENTED human name (e.g., 'Sarah Jenkins', 'David Cohen', 'Emma Thompson') and a title like 'Talent Acquisition Lead'. 
+Do NOT use placeholders like [Name] or [Recruiter]."""
 
-        # תיקון קריטי: שימוש במודל Haiku שתמיד עובד
+        # Using Haiku model
         message = client.messages.create(
             model="claude-3-haiku-20240307",
             max_tokens=1024,
@@ -109,7 +118,7 @@ Sign off with a recruiter title."""
         return jsonify({
             'success': True,
             'rejection_letter': rejection_text,
-            'count': new_count,
+            'count': new_count, # This sends the updated number to the frontend
             'company': company,
             'role': role,
             'email_sent': email_sent
