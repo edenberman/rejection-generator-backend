@@ -1,5 +1,6 @@
 flask
 flask-cors
 anthropic
-gunicorn
 resend
+gunicorn
+requests
