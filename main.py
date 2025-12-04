@@ -1,4 +1,4 @@
-# main.py - SONNET RETURN + HEARTFELT PROMPT
+# main.py - HAIKU ENGINE + SMART PROMPT (The Winner)
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from anthropic import Anthropic
@@ -82,7 +82,7 @@ def generate_rejection():
         
         new_count = increment_counter()
         
-        # THE HEARTFELT PROMPT (Restored & Refined)
+        # THE SMART PROMPT (Sandwich Method)
         prompt = f"""Generate a rejection letter from {company} for the role of {role}.
 The candidate's name is {first_name} {last_name}.
 
@@ -111,9 +111,9 @@ CRITICAL FORMATTING RULES:
 3. Start directly with "Dear {first_name},"
 4. Sign off with a REALISTIC, INVENTED human name (e.g., 'Sarah Jenkins', 'David Cohen', 'Emma Thompson') and a title like 'Talent Acquisition Lead'. Do not use placeholders."""
 
-        # Back to Sonnet (Standard Version)
+        # Back to Haiku (The only one that works for your account)
         message = client.messages.create(
-            model="claude-3-sonnet-20240229",
+            model="claude-3-haiku-20240307",
             max_tokens=1024,
             messages=[{
                 "role": "user",
