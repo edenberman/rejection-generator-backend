@@ -94,8 +94,14 @@ def generate_rejection():
         
         new_count = increment_counter()
         
+        # PROMPT - Explicitly telling the AI not to use headers
         prompt = f"""Generate a rejection letter from {company} for the role of {role}.
 The candidate's name is {first_name} {last_name}.
+
+STRICT FORMATTING INSTRUCTION: 
+Do NOT write a subject line. 
+Do NOT write the company name at the top.
+Start your response IMMEDIATELY with "Dear {first_name},"
 
 STRUCTURE:
 
@@ -115,10 +121,8 @@ PARAGRAPH 3 - BACK TO CORPORATE:
 Snap back to dry corporate tone. "We wish you the best in your future endeavors."
 
 Sign off with a realistic recruiter name and title (e.g. Talent Acquisition Partner).
-Do NOT include a Subject line. Start with "Dear {first_name}".
 Total length: around 200 words."""
 
-        # חזרנו לקריאה סטנדרטית ובטוחה ל-API
         message = client.messages.create(
             model="claude-3-5-sonnet-20240620",
             max_tokens=1024,
@@ -128,26 +132,15 @@ Total length: around 200 words."""
             }]
         )
         
-        raw_text = message.content[0].text
-        
-        # PYTHON CLEANUP MAGIC
-        # כאן אנחנו בודקים אם יש כותרת לפני ה-"Dear" וחותכים אותה
-        clean_text = raw_text
-        if f"Dear {first_name}" in raw_text:
-            # מוצא את האינדקס שבו מתחיל ה-Dear וחותך משם והלאה
-            start_index = raw_text.find(f"Dear {first_name}")
-            clean_text = raw_text[start_index:]
-        elif "Dear" in raw_text:
-             start_index = raw_text.find("Dear")
-             clean_text = raw_text[start_index:]
+        rejection_text = message.content[0].text
         
         email_sent = False
         if email:
-            email_sent, _ = send_rejection_email(email, clean_text, company, role)
+            email_sent, _ = send_rejection_email(email, rejection_text, company, role)
         
         return jsonify({
             'success': True,
-            'rejection_letter': clean_text,
+            'rejection_letter': rejection_text,
             'count': new_count,
             'company': company,
             'role': role,
