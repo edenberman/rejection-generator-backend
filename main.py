@@ -1,4 +1,4 @@
-# main.py - HAIKU ENGINE + SMART PROMPT (The Winner)
+# main.py - HAIKU ENGINE + DEEP PHILOSOPHICAL PROMPT
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from anthropic import Anthropic
@@ -82,36 +82,36 @@ def generate_rejection():
         
         new_count = increment_counter()
         
-        # THE SMART PROMPT (Sandwich Method)
-        prompt = f"""Generate a rejection letter from {company} for the role of {role}.
-The candidate's name is {first_name} {last_name}.
-
-STRUCTURE - THIS IS CRUCIAL:
-
-PARAGRAPH 1 - CORPORATE OPENING:
-Start with a completely standard, dry corporate rejection opening. "Dear {first_name}, thank you for taking the time... after careful consideration... we regret to inform you..." 
-Make it feel like every other rejection letter ever written. Professional. Distant. Template-like.
-
-PARAGRAPH 2 - THE BREAK (THIS IS THE HEART):
-Suddenly, the tone shifts. The letter becomes unexpectedly human. Not sarcastic, not satirical—genuinely warm and honest. 
-The recruiter breaks character and speaks directly to the reader about what really matters:
-- Getting a "no" is okay. It's part of the journey.
-- A rejection letter doesn't define your worth.
-- The courage to apply, to try, to keep going—that's what matters.
-- Mention something like: "Between you and me, none of this really matters as much as we pretend it does."
-- Tell them to keep believing in what they are building toward.
-
-PARAGRAPH 3 - BACK TO CORPORATE:
-Snap back to dry corporate tone abruptly. "We wish you the best in your future endeavors."
-The contrast should feel almost jarring—like the human moment never happened.
+        # --- THE EXTENDED & SMART PROMPT ---
+        prompt = f"""Write a rejection letter from {company} for the role of {role} to {first_name} {last_name}.
 
 CRITICAL FORMATTING RULES:
-1. Do NOT include a subject line.
+1. Do NOT write a subject line.
 2. Do NOT write the company name at the top.
-3. Start directly with "Dear {first_name},"
-4. Sign off with a REALISTIC, INVENTED human name (e.g., 'Sarah Jenkins', 'David Cohen', 'Emma Thompson') and a title like 'Talent Acquisition Lead'. Do not use placeholders."""
+3. Start strictly with "Dear {first_name},"
 
-        # Back to Haiku (The only one that works for your account)
+STRUCTURE:
+
+PARAGRAPH 1: THE CORPORATE MASK.
+Keep this brief, standard, and dry. "Thank you for applying... reviewed your qualifications... decided to move forward with other candidates." Professional and distant.
+
+PARAGRAPH 2: THE MASK SLIPS (EXPANDED & INSIGHTFUL).
+Suddenly, the tone shifts completely. The recruiter breaks the fourth wall. 
+Write a substantial paragraph (approx 100-150 words) that speaks to the absurdity and difficulty of the modern career journey.
+Touch on themes like:
+- The invisible effort: How weird it is to spend hours optimizing a CV for an algorithm that might not even read it.
+- The non-linearity of careers: How LinkedIn makes everyone's path look like a straight line, but in reality, it's a messy maze.
+- The resilience required: Acknowledge that hearing "no" is exhausting, but it's just data. It's not a verdict on their worth as a human or a professional.
+- A moment of genuine connection: "Between you and me, none of these corporate metrics measure the things that actually matter—your curiosity, your grit, or your kindness."
+- Encourage them to keep building, keep pushing, because the right door will open.
+
+PARAGRAPH 3: BACK TO BUSINESS.
+Snap back to the dry corporate tone immediately, as if the honest moment never happened. "We wish you the best in your future endeavors."
+
+Sign off with a REALISTIC, INVENTED human name (e.g., 'Sarah Jenkins', 'David Cohen', 'Emma Thompson') and a title like 'Talent Acquisition Lead'. 
+Do NOT use placeholders."""
+
+        # Using Haiku (Stable)
         message = client.messages.create(
             model="claude-3-haiku-20240307",
             max_tokens=1024,
