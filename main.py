@@ -6,7 +6,7 @@ import os
 import json
 from datetime import datetime
 import resend
-import urllib.parse # הוספנו את זה בשביל הלינק
+import urllib.parse
 
 app = Flask(__name__)
 CORS(app)
@@ -15,7 +15,7 @@ CORS(app)
 client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 resend.api_key = os.environ.get("RESEND_API_KEY")
 
-# Counter file logic... (נשאר אותו דבר)
+# Counter file logic
 COUNTER_FILE = 'rejection_counter.json'
 
 def get_counter():
@@ -35,7 +35,7 @@ def increment_counter():
 def send_rejection_email(to_email, rejection_text, company, role):
     """Send the rejection letter via email with a careers link"""
     
-    # יצירת לינק חכם לעמוד הקריירה
+    # Create smart link for careers page
     company_safe = urllib.parse.quote(company)
     careers_url = f"https://www.google.com/search?q={company_safe}+careers+page&btnI=1"
     
@@ -94,12 +94,8 @@ def generate_rejection():
         
         new_count = increment_counter()
         
-        # UPDATED PROMPT - הסרנו את הכותרת
         prompt = f"""Generate a rejection letter from {company} for the role of {role}.
 The candidate's name is {first_name} {last_name}.
-
-CRITICAL INSTRUCTION: Do NOT include a subject line, header, title, or the company name at the top. 
-Start the text directly with "Dear {first_name},"
 
 STRUCTURE:
 
@@ -121,16 +117,26 @@ Snap back to dry corporate tone. "We wish you the best in your future endeavors.
 Sign off with a realistic recruiter name and title (e.g. Talent Acquisition Partner).
 Total length: around 200 words."""
 
+        # Force the model to start with "Dear X," to prevent headers
+        prefill_text = f"Dear {first_name},"
+
         message = client.messages.create(
-            model="claude-3-5-sonnet-20240620", # שים לב שהמודל מעודכן
+            model="claude-3-5-sonnet-20240620",
             max_tokens=1024,
-            messages=[{
-                "role": "user",
-                "content": prompt
-            }]
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                },
+                {
+                    "role": "assistant",
+                    "content": prefill_text
+                }
+            ]
         )
         
-        rejection_text = message.content[0].text
+        # Combine the prefill with the generated text
+        rejection_text = prefill_text + message.content[0].text
         
         email_sent = False
         if email:
@@ -146,7 +152,7 @@ Total length: around 200 words."""
         })
         
     except Exception as e:
-        print(f"Backend Error: {str(e)}") # לוג לשגיאות
+        print(f"Backend Error: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
