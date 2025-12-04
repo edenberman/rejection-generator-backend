@@ -1,4 +1,4 @@
-# main.py - FINAL VERSION (Name Fix + Live Counter)
+# main.py - SONNET RETURN + HEARTFELT PROMPT
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from anthropic import Anthropic
@@ -37,7 +37,7 @@ def increment_counter():
         return new_count
     except Exception as e:
         print(f"Counter Write Error: {e}")
-        return get_counter() + 1 # Fallback to just incrementing in memory for this request
+        return get_counter() + 1
 
 def send_rejection_email(to_email, rejection_text, company, role):
     """Send the rejection letter via email"""
@@ -80,27 +80,40 @@ def generate_rejection():
         role = data.get('role', 'Product Manager')
         email = data.get('email', None)
         
-        # This is where the magic happens - actually updating the file
         new_count = increment_counter()
         
-        prompt = f"""Write a rejection letter from {company} for the role of {role} to {first_name} {last_name}.
+        # THE HEARTFELT PROMPT (Restored & Refined)
+        prompt = f"""Generate a rejection letter from {company} for the role of {role}.
+The candidate's name is {first_name} {last_name}.
 
-CRITICAL RULES:
-1. Do NOT write a subject line.
+STRUCTURE - THIS IS CRUCIAL:
+
+PARAGRAPH 1 - CORPORATE OPENING:
+Start with a completely standard, dry corporate rejection opening. "Dear {first_name}, thank you for taking the time... after careful consideration... we regret to inform you..." 
+Make it feel like every other rejection letter ever written. Professional. Distant. Template-like.
+
+PARAGRAPH 2 - THE BREAK (THIS IS THE HEART):
+Suddenly, the tone shifts. The letter becomes unexpectedly human. Not sarcastic, not satirical—genuinely warm and honest. 
+The recruiter breaks character and speaks directly to the reader about what really matters:
+- Getting a "no" is okay. It's part of the journey.
+- A rejection letter doesn't define your worth.
+- The courage to apply, to try, to keep going—that's what matters.
+- Mention something like: "Between you and me, none of this really matters as much as we pretend it does."
+- Tell them to keep believing in what they are building toward.
+
+PARAGRAPH 3 - BACK TO CORPORATE:
+Snap back to dry corporate tone abruptly. "We wish you the best in your future endeavors."
+The contrast should feel almost jarring—like the human moment never happened.
+
+CRITICAL FORMATTING RULES:
+1. Do NOT include a subject line.
 2. Do NOT write the company name at the top.
-3. Start strictly with "Dear {first_name},"
+3. Start directly with "Dear {first_name},"
+4. Sign off with a REALISTIC, INVENTED human name (e.g., 'Sarah Jenkins', 'David Cohen', 'Emma Thompson') and a title like 'Talent Acquisition Lead'. Do not use placeholders."""
 
-Structure:
-- Paragraph 1: Standard corporate rejection ("Thank you for applying...").
-- Paragraph 2: The "Break". Suddenly warm, honest, human. Tell them this rejection doesn't define them. "Between you and me..."
-- Paragraph 3: Back to corporate closing ("Best regards...").
-
-Sign off with a REALISTIC, INVENTED human name (e.g., 'Sarah Jenkins', 'David Cohen', 'Emma Thompson') and a title like 'Talent Acquisition Lead'. 
-Do NOT use placeholders like [Name] or [Recruiter]."""
-
-        # Using Haiku model
+        # Back to Sonnet (Standard Version)
         message = client.messages.create(
-            model="claude-3-haiku-20240307",
+            model="claude-3-sonnet-20240229",
             max_tokens=1024,
             messages=[{
                 "role": "user",
@@ -110,7 +123,6 @@ Do NOT use placeholders like [Name] or [Recruiter]."""
         
         rejection_text = message.content[0].text
         
-        # Email sending
         email_sent = False
         if email:
             email_sent, _ = send_rejection_email(email, rejection_text, company, role)
@@ -118,7 +130,7 @@ Do NOT use placeholders like [Name] or [Recruiter]."""
         return jsonify({
             'success': True,
             'rejection_letter': rejection_text,
-            'count': new_count, # This sends the updated number to the frontend
+            'count': new_count,
             'company': company,
             'role': role,
             'email_sent': email_sent
