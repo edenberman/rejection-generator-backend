@@ -115,36 +115,39 @@ PARAGRAPH 3 - BACK TO CORPORATE:
 Snap back to dry corporate tone. "We wish you the best in your future endeavors."
 
 Sign off with a realistic recruiter name and title (e.g. Talent Acquisition Partner).
+Do NOT include a Subject line. Start with "Dear {first_name}".
 Total length: around 200 words."""
 
-        # Force the model to start with "Dear X," to prevent headers
-        prefill_text = f"Dear {first_name},"
-
+        # חזרנו לקריאה סטנדרטית ובטוחה ל-API
         message = client.messages.create(
             model="claude-3-5-sonnet-20240620",
             max_tokens=1024,
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                },
-                {
-                    "role": "assistant",
-                    "content": prefill_text
-                }
-            ]
+            messages=[{
+                "role": "user",
+                "content": prompt
+            }]
         )
         
-        # Combine the prefill with the generated text
-        rejection_text = prefill_text + message.content[0].text
+        raw_text = message.content[0].text
+        
+        # PYTHON CLEANUP MAGIC
+        # כאן אנחנו בודקים אם יש כותרת לפני ה-"Dear" וחותכים אותה
+        clean_text = raw_text
+        if f"Dear {first_name}" in raw_text:
+            # מוצא את האינדקס שבו מתחיל ה-Dear וחותך משם והלאה
+            start_index = raw_text.find(f"Dear {first_name}")
+            clean_text = raw_text[start_index:]
+        elif "Dear" in raw_text:
+             start_index = raw_text.find("Dear")
+             clean_text = raw_text[start_index:]
         
         email_sent = False
         if email:
-            email_sent, _ = send_rejection_email(email, rejection_text, company, role)
+            email_sent, _ = send_rejection_email(email, clean_text, company, role)
         
         return jsonify({
             'success': True,
-            'rejection_letter': rejection_text,
+            'rejection_letter': clean_text,
             'count': new_count,
             'company': company,
             'role': role,
